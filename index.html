@@ -1072,37 +1072,43 @@ function generateTripList() {
             }
         }
 
-        function renderWeather() {
-            const weatherGrid = document.getElementById('weatherGrid');
-            weatherGrid.innerHTML = '';
+  function renderWeather() {
+    const weatherGrid = document.getElementById('weatherGrid');
+    weatherGrid.innerHTML = '';
+    
+    if (currentTrip.weather) {
+        currentTrip.weather.forEach(day => {
+            const tempClass = day.temp < 10 ? 'temp-cold' : 
+                             day.temp < 20 ? 'temp-mild' : 
+                             day.temp < 25 ? 'temp-warm' : 'temp-hot';
             
-            if (currentTrip.weather) {
-                currentTrip.weather.forEach(day => {
-                    const tempClass = day.temp < 10 ? 'temp-cold' : 
-                                     day.temp < 20 ? 'temp-mild' : 
-                                     day.temp < 25 ? 'temp-warm' : 'temp-hot';
-                    
-                    const dayElement = document.createElement('div');
-                    dayElement.className = 'weather-day';
-                    dayElement.innerHTML = `
-                        <div style="font-size: 2.5em; margin-bottom: 10px;">${day.icon}</div>
-                        <div style="font-weight: 600; margin-bottom: 5px;">${day.date}</div>
-                        <div style="margin-bottom: 8px;">${day.condition}</div>
-                        <div class="temp-indicator ${tempClass}">${day.temp}°C</div>
-                    `;
-                    weatherGrid.appendChild(dayElement);
-                });
-                
-                // Add weather insights
-                const insights = generateWeatherInsights();
-                if (insights) {
-                    const insightsElement = document.createElement('div');
-                    insightsElement.style.cssText = 'grid-column: 1 / -1; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 10px;';
-                    insightsElement.innerHTML = `<strong>🔍 Weather Insights:</strong> ${insights}`;
-                    weatherGrid.appendChild(insightsElement);
-                }
-            }
+            const dayElement = document.createElement('div');
+            dayElement.className = 'weather-day';
+            dayElement.innerHTML = `
+                <div style="font-size: 2.5em; margin-bottom: 10px;">${day.icon}</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">${day.date}</div>
+                <div style="margin-bottom: 8px;">${day.condition}</div>
+                <div class="temp-indicator ${tempClass}">${day.temp}°C</div>
+                <div style="font-size: 0.85em; margin-top: 8px; opacity: 0.9;">
+                    <div>High: ${day.maxTemp || day.temp}°C | Low: ${day.minTemp || day.temp}°C</div>
+                    <div style="margin-top: 4px;">
+                        💧 ${day.humidity || 50}% | ☔ ${day.chanceOfRain || 0}%
+                    </div>
+                </div>
+            `;
+            weatherGrid.appendChild(dayElement);
+        });
+        
+        // Add weather insights
+        const insights = generateWeatherInsights();
+        if (insights) {
+            const insightsElement = document.createElement('div');
+            insightsElement.style.cssText = 'grid-column: 1 / -1; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 10px;';
+            insightsElement.innerHTML = `<strong>🔍 Weather Insights:</strong> ${insights}`;
+            weatherGrid.appendChild(insightsElement);
         }
+    }
+}
 
         function generateWeatherInsights() {
             if (!currentTrip.weather) return '';
