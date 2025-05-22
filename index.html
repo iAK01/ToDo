@@ -751,59 +751,75 @@
             }
         };
 
-        // Enhanced weather simulation with location-based patterns
-        function fetchWeatherData() {
-            const weatherPatterns = {
-                'athens': { base: 22, variation: 5, rainChance: 0.2, conditions: ['Sunny', 'Partly Cloudy'] },
-                'london': { base: 15, variation: 8, rainChance: 0.4, conditions: ['Cloudy', 'Rainy', 'Partly Cloudy'] },
-                'bangkok': { base: 32, variation: 3, rainChance: 0.3, conditions: ['Hot', 'Humid', 'Thunderstorms'] },
-                'reykjavik': { base: 8, variation: 6, rainChance: 0.3, conditions: ['Cold', 'Windy', 'Partly Cloudy'] },
-                'dubai': { base: 35, variation: 4, rainChance: 0.1, conditions: ['Sunny', 'Hot', 'Clear'] },
-                'tokyo': { base: 20, variation: 7, rainChance: 0.25, conditions: ['Partly Cloudy', 'Clear', 'Light Rain'] },
-                'new york': { base: 18, variation: 10, rainChance: 0.3, conditions: ['Partly Cloudy', 'Clear', 'Rainy'] },
-                'paris': { base: 16, variation: 6, rainChance: 0.35, conditions: ['Cloudy', 'Light Rain', 'Partly Cloudy'] }
-            };
-            
-            // Try to match location to pattern
-            const locationKey = Object.keys(weatherPatterns).find(key => 
-                currentTrip.location.toLowerCase().includes(key)
-            );
-            
-            const pattern = locationKey ? weatherPatterns[locationKey] : 
-                { base: 20, variation: 8, rainChance: 0.25, conditions: ['Partly Cloudy', 'Sunny', 'Cloudy'] };
-            
-            currentTrip.weather = [];
-            const startDate = new Date(currentTrip.startDate);
-            
-            for (let i = 0; i < Math.min(currentTrip.nights, 7); i++) {
-                const date = new Date(startDate);
-                date.setDate(date.getDate() + i);
-                
-                // Generate realistic temperature
-                const tempVariation = (Math.random() - 0.5) * pattern.variation;
-                const temp = Math.round(pattern.base + tempVariation);
-                
-                // Determine condition
-                let condition;
-                if (Math.random() < pattern.rainChance) {
-                    condition = pattern.conditions.find(c => c.toLowerCase().includes('rain')) || 'Rainy';
-                } else {
-                    condition = pattern.conditions[Math.floor(Math.random() * pattern.conditions.length)];
-                }
-                
-                // Get appropriate weather icon
-                const icon = getWeatherIcon(condition, temp);
-                
-                currentTrip.weather.push({
-                    date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-                    condition: condition,
-                    temp: temp,
-                    icon: icon
-                });
-            }
-            
-            renderWeather();
+// Real weather API integration
+async function fetchWeatherData() {
+    const API_KEY = '90c4c9014ba54aecadd160109231806';
+    const days = Math.min(currentTrip.nights, 7); // WeatherAPI free tier supports up to 10 days
+    
+    try {
+        const url = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(currentTrip.location)}&days=${days}&aqi=no&alerts=no`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error.message);
         }
+        
+        currentTrip.weather = [];
+        
+        // Process forecast data
+        data.forecast.forecastday.forEach(day => {
+            const date = new Date(day.date);
+            const condition = day.day.condition.text;
+            const temp = Math.round(day.day.avgtemp_c);
+            const icon = getWeatherIcon(condition, temp);
+            
+            currentTrip.weather.push({
+                date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+                condition: condition,
+                temp: temp,
+                icon: icon,
+                humidity: day.day.avghumidity,
+                chanceOfRain: day.day.daily_chance_of_rain,
+                maxTemp: Math.round(day.day.maxtemp_c),
+                minTemp: Math.round(day.day.mintemp_c)
+            });
+        });
+        
+        renderWeather();
+        
+    } catch (error) {
+        console.error('Weather API failed:', error);
+        showNotification(`Weather fetch failed: ${error.message}. Using default settings.`, 'warning');
+        
+        // Fallback to basic weather simulation
+        createFallbackWeather();
+        renderWeather();
+    }
+}
+
+// Fallback weather if API fails
+function createFallbackWeather() {
+    currentTrip.weather = [];
+    const startDate = new Date(currentTrip.startDate);
+    
+    for (let i = 0; i < Math.min(currentTrip.nights, 7); i++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + i);
+        
+        currentTrip.weather.push({
+            date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+            condition: 'Partly Cloudy',
+            temp: 20,
+            icon: '🌤️',
+            humidity: 50,
+            chanceOfRain: 20,
+            maxTemp: 25,
+            minTemp: 15
+        });
+    }
+}    
 
         function getWeatherIcon(condition, temp) {
             const conditionLower = condition.toLowerCase();
