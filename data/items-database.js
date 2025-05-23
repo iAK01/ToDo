@@ -158,14 +158,14 @@ export const itemsDatabase = {
             'Scarf': { multiplier: 0, essential: false },
             'Warm socks': { multiplier: 0.8, essential: true }
         },
-        hot_weather: 
-            'Light shirts': { multiplier: 0.8, essential: true },
-            'Shorts': { multiplier: 0.6, essential: true },
-            'Sandals': { multiplier: 0, essential: true },
-            'Sun hat': { multiplier: 0, essential: true },
-            'Sunglasses': { multiplier: 0, essential: true },
-            'Sunscreen': { multiplier: 0, essential: true }
-        },
+       hot_weather: {
+    'Light shirts': { multiplier: 0.8, essential: true },
+    'Shorts': { multiplier: 0.6, essential: true },
+    'Sandals': { multiplier: 0, essential: true },
+    'Sun hat': { multiplier: 0, essential: true },
+    'Sunglasses': { multiplier: 0, essential: true },
+    'Sunscreen': { multiplier: 0, essential: true }
+},
         rainy_weather: {
             'Rain jacket': { multiplier: 0, essential: true },
             'Waterproof shoes': { multiplier: 0, essential: false },
@@ -240,7 +240,7 @@ export const itemsDatabase = {
             'Medical devices': { multiplier: 0, essential: true },
             'Emergency contacts': { multiplier: 0, essential: true },
             'Insurance cards': { multiplier: 0, essential: true },
-            'Allergy medications': { multiplier: 0, essential: false }
+            'Allergy medications': { multiplier: 0, essential: false },
             'Massager': { multiplier: 0, essential: false }
         },
         tech_nomad: {
