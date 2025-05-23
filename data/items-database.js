@@ -84,7 +84,12 @@ export const itemsDatabase = {
                     multiplier: 0,
                     essential: false,
                     description: 'Moisturizer, sunscreen'
-                }
+                },
+                      'Coffee/Tea': { 
+            multiplier: 0, 
+            essential: false,
+            description: 'For morning routine, aeropress etc'
+        }
             }
         },
         electronics: {
