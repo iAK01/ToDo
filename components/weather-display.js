@@ -1,5 +1,5 @@
 // Weather Display Component - shows the weather forecast
-import { WeatherAPI } from '../data/weather-api.js';
+import { WeatherAPI } from '../utils/weather-api.js';
 
 export class WeatherDisplay {
     constructor(options) {
