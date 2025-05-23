@@ -47,6 +47,7 @@ export class WeatherDisplay {
                 <div class="icon">${day.icon}</div>
                 <div class="condition">${day.condition}</div>
                 <div class="temp">${day.temp}°C</div>
+                <div class="source">🛰️ Source: ${day.source}</div>
                 <div class="range">↑ ${day.maxTemp}° | ↓ ${day.minTemp}°</div>
                 <div class="details">💧 ${day.humidity}% | ☔ ${day.chanceOfRain}% | 🌬️ ${day.wind} km/h</div>
             </div>
