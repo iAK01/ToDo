@@ -4,35 +4,44 @@ import { WeatherAPI } from '../data/weather-api.js';
 export class WeatherDisplay {
     constructor(options) {
         this.container = options.container;
-        this.location = options.location || 'Dublin';
-        this.days = options.days || 5;
-
         this.weatherAPI = new WeatherAPI();
+        this.weatherData = null;
         this.renderSkeleton();
-        this.loadWeather();
     }
 
     renderSkeleton() {
         this.container.innerHTML = `
-            <div class="weather-section" id="weatherSection">
+            <div class="weather-section hidden" id="weatherSection">
                 <h3>🌤️ Weather Forecast</h3>
                 <div id="weatherCards" class="weather-cards">Loading...</div>
             </div>
         `;
     }
 
-    async loadWeather() {
+    async fetchWeather(location, days) {
         const weatherCards = this.container.querySelector('#weatherCards');
+        weatherCards.innerHTML = 'Loading...';
         try {
-            const data = await this.weatherAPI.getWeather(this.location, this.days);
-            weatherCards.innerHTML = data.map(day => this.renderDayCard(day)).join('');
+            this.weatherData = await this.weatherAPI.getWeather(location, days);
+            this.render(this.weatherData);
         } catch (error) {
             weatherCards.innerHTML = `<p class="error">Failed to load weather: ${error.message}</p>`;
         }
     }
 
-    renderDayCard(day) {
-        return `
+    getWeatherData() {
+        return this.weatherData;
+    }
+
+    render(weatherData) {
+        const section = this.container.querySelector('.weather-section');
+        const weatherCards = this.container.querySelector('#weatherCards');
+
+        if (!weatherCards || !weatherData) return;
+
+        section.classList.remove('hidden');
+
+        weatherCards.innerHTML = weatherData.map(day => `
             <div class="weather-card">
                 <div class="date">${day.date}</div>
                 <div class="icon">${day.icon}</div>
@@ -41,6 +50,6 @@ export class WeatherDisplay {
                 <div class="range">↑ ${day.maxTemp}° | ↓ ${day.minTemp}°</div>
                 <div class="details">💧 ${day.humidity}% | ☔ ${day.chanceOfRain}% | 🌬️ ${day.wind} km/h</div>
             </div>
-        `;
+        `).join('');
     }
 }
