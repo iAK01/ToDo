@@ -525,3 +525,27 @@ body {
     .add-item-form input[type="text"],
     .add-item-form input[type="number"] { width: 100%; }
 }
+.weather-cards {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+.weather-card {
+  flex: 0 0 auto;
+  width: 120px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.85em;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.weather-card .icon {
+  font-size: 2em;
+}
+.weather-card .range,
+.weather-card .details {
+  font-size: 0.75em;
+  color: #555;
+}
