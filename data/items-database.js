@@ -93,12 +93,12 @@ export const itemsDatabase = {
                 'Phone charger': { 
                     multiplier: 0, 
                     essential: true,
-                    description: 'Consider backup cable'
+                    description: 'Consider backup cables also'
                 },
                 'Universal adapter': { 
                     multiplier: 0, 
                     essential: true,
-                    description: 'For international travel'
+                    description: 'For international travel non UK! EU? US?'
                 },
                 'Power bank': { 
                     multiplier: 0, 
@@ -108,7 +108,7 @@ export const itemsDatabase = {
                 'Headphones': {
                     multiplier: 0,
                     essential: false,
-                    description: 'For flights and downtime'
+                    description: 'For flights and downtime, bearing in mind the Anker for multiple connections and noise cancelling'
                 }
             }
         },
@@ -128,7 +128,7 @@ export const itemsDatabase = {
                 'Flight/transport tickets': { 
                     multiplier: 0, 
                     essential: true,
-                    description: 'Print backups'
+                    description: 'Print backups and download to Apple Wallet'
                 },
                 'Hotel confirmations': {
                     multiplier: 0,
@@ -158,8 +158,8 @@ export const itemsDatabase = {
             'Scarf': { multiplier: 0, essential: false },
             'Warm socks': { multiplier: 0.8, essential: true }
         },
-        hot_weather: {
-            'Light shirts': { multiplier: 1, essential: true },
+        hot_weather: 
+            'Light shirts': { multiplier: 0.8, essential: true },
             'Shorts': { multiplier: 0.6, essential: true },
             'Sandals': { multiplier: 0, essential: true },
             'Sun hat': { multiplier: 0, essential: true },
@@ -241,6 +241,7 @@ export const itemsDatabase = {
             'Emergency contacts': { multiplier: 0, essential: true },
             'Insurance cards': { multiplier: 0, essential: true },
             'Allergy medications': { multiplier: 0, essential: false }
+            'Massager': { multiplier: 0, essential: false }
         },
         tech_nomad: {
             'Laptop': { multiplier: 0, essential: true },
