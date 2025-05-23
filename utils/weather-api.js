@@ -6,30 +6,33 @@ export class WeatherAPI {
         this.baseUrl = 'https://api.weatherapi.com/v1/forecast.json';
     }
 
-    async getWeather(location, days, startDate = new Date()) {
-        const forecastDays = Math.min(days, 10);
-        const today = new Date();
-        const start = new Date(startDate);
-        const diffDays = Math.round((start - today) / (1000 * 60 * 60 * 24));
+  async getWeather(location, days, startDate = new Date()) {
+    const today = new Date();
+    const start = new Date(startDate);
+    const diffDays = Math.round((start - today) / (1000 * 60 * 60 * 24));
 
-        if (diffDays > 3) {
-            console.warn('Too far in future for free WeatherAPI — falling back to Open-Meteo');
-            return await this.getOpenMeteoWeather(location, startDate, days);
-        }
-
-        try {
-            const url = `${this.baseUrl}?key=${this.apiKey}&q=${encodeURIComponent(location)}&days=${forecastDays}&aqi=no&alerts=no`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.error) throw new Error(data.error.message);
-
-            return this.processWeatherData(data);
-        } catch (error) {
-            console.warn('WeatherAPI failed, falling back to Open-Meteo:', error.message);
-            return await this.getOpenMeteoWeather(location, startDate, days);
-        }
+    // ✅ Use Open-Meteo if:
+    // - trip is longer than 3 days
+    // - OR trip starts more than 3 days in the future
+    if (days > 3 || diffDays > 3) {
+        console.warn('Using Open-Meteo due to extended forecast need');
+        return await this.getOpenMeteoWeather(location, startDate, days);
     }
+
+    // Otherwise use WeatherAPI (for short trips in the next 3 days)
+    try {
+        const url = `${this.baseUrl}?key=${this.apiKey}&q=${encodeURIComponent(location)}&days=${days}&aqi=no&alerts=no`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error.message);
+
+        return this.processWeatherData(data);
+    } catch (error) {
+        console.warn('WeatherAPI failed, falling back to Open-Meteo:', error.message);
+        return await this.getOpenMeteoWeather(location, startDate, days);
+    }
+}
 
     processWeatherData(data) {
         const weatherData = [];
