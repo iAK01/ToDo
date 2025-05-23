@@ -85,9 +85,9 @@ export const itemsDatabase = {
                     essential: false,
                     description: 'Moisturizer, sunscreen'
                 },
-                      'Coffee/Tea': { 
+                'Coffee/Tea': { 
                     multiplier: 2, 
-                    essential: false,
+                    essential: true,
                     description: 'For morning routine, aeropress etc'
         }
             }
