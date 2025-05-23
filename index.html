@@ -631,92 +631,71 @@
                 }
             },
             activities: {
-                hiking: {
-                    trigger: (notes, tripType) => 
-                        notes.toLowerCase().includes('hik') || 
-                        notes.toLowerCase().includes('trek') || 
-                        notes.toLowerCase().includes('trail') ||
-                        tripType === 'camping',
-                    items: {
-                        'Hiking boots': { multiplier: 0, essential: true },
-                        'Hiking backpack': { multiplier: 0, essential: true },
-                        'Quick-dry shirts': { multiplier: 0.6, essential: true },
-                        'Hiking pants': { multiplier: 0.4, essential: true },
-                        'First aid kit': { multiplier: 0, essential: true },
-                        'Water bottle': { multiplier: 0, essential: true },
-                        'Hiking socks': { multiplier: 0.8, essential: true }
-                    }
-                },
-                sightseeing: {
-                    trigger: (notes, tripType) => 
-                        notes.toLowerCase().includes('sight') || 
-                        notes.toLowerCase().includes('museum') || 
-                        notes.toLowerCase().includes('tour') ||
-                        tripType === 'leisure' || tripType === 'city-break',
-                    items: {
-                        'Comfortable walking shoes': { multiplier: 0, essential: true },
-                        'Small daypack': { multiplier: 0, essential: true },
-                        'Camera': { multiplier: 0, essential: false },
-                        'Portable phone charger': { multiplier: 0, essential: true },
-                        'Comfortable casual clothes': { multiplier: 0.6, essential: true }
-                    }
-                },
-                business: {
-                    trigger: (notes, tripType) => 
-                        tripType === 'business' || 
-                        notes.toLowerCase().includes('meeting') || 
-                        notes.toLowerCase().includes('conference'),
-                    items: {
-                        'Business shirts': { multiplier: 0.4, essential: true, min: 2 },
-                        'Formal trousers': { multiplier: 0.3, essential: true, min: 2 },
-                        'Formal shoes': { multiplier: 0, essential: true },
-                        'Blazer/jacket': { multiplier: 0, essential: true },
-                        'Ties': { multiplier: 0.4, essential: false, min: 2 },
-                        'Business cards': { multiplier: 0, essential: true },
-                        'Laptop & charger': { multiplier: 0, essential: true },
-                        'Notebook & pens': { multiplier: 0, essential: true }
-                    }
-                },
-                beach: {
-                    trigger: (notes, tripType) => 
-                        tripType === 'beach' || 
-                        notes.toLowerCase().includes('beach') || 
-                        notes.toLowerCase().includes('swim'),
-                    items: {
-                        'Swimwear': { multiplier: 0.4, essential: true, min: 2 },
-                        'Beach towel': { multiplier: 0, essential: true },
-                        'Flip flops': { multiplier: 0, essential: true },
-                        'Waterproof phone case': { multiplier: 0, essential: false },
-                        'Beach bag': { multiplier: 0, essential: false }
-                    }
-                },
-                photography: {
-                    trigger: (notes) => 
-                        notes.toLowerCase().includes('photo') || 
-                        notes.toLowerCase().includes('camera') ||
-                        notes.toLowerCase().includes('instagram'),
-                    items: {
-                        'Camera equipment': { multiplier: 0, essential: true },
-                        'Extra memory cards': { multiplier: 0, essential: true },
-                        'Camera batteries': { multiplier: 0, essential: true },
-                        'Tripod': { multiplier: 0, essential: false },
-                        'Lens cleaning kit': { multiplier: 0, essential: false }
-                    }
-                },
-                workout: {
-                    trigger: (notes) => 
-                        notes.toLowerCase().includes('gym') || 
-                        notes.toLowerCase().includes('workout') ||
-                        notes.toLowerCase().includes('exercise') ||
-                        notes.toLowerCase().includes('run'),
-                    items: {
-                        'Workout clothes': { multiplier: 0.4, essential: true },
-                        'Sports shoes': { multiplier: 0, essential: true },
-                        'Sports socks': { multiplier: 0.6, essential: true },
-                        'Gym towel': { multiplier: 0, essential: false }
-                    }
-                }
-            },
+    hiking: {
+        trigger: () => document.getElementById('activity-hiking')?.checked,
+        items: {
+            'Hiking boots': { multiplier: 0, essential: true },
+            'Hiking backpack': { multiplier: 0, essential: true },
+            'Quick-dry shirts': { multiplier: 0.6, essential: true },
+            'Hiking pants': { multiplier: 0.4, essential: true },
+            'First aid kit': { multiplier: 0, essential: true },
+            'Water bottle': { multiplier: 0, essential: true },
+            'Hiking socks': { multiplier: 0.8, essential: true }
+        }
+    },
+    sightseeing: {
+        trigger: () => document.getElementById('activity-sightseeing')?.checked,
+        items: {
+            'Comfortable walking shoes': { multiplier: 0, essential: true },
+            'Small daypack': { multiplier: 0, essential: true },
+            'Camera': { multiplier: 0, essential: false },
+            'Portable phone charger': { multiplier: 0, essential: true },
+            'Comfortable casual clothes': { multiplier: 0.6, essential: true }
+        }
+    },
+    business: {
+        trigger: () => document.getElementById('activity-business')?.checked,
+        items: {
+            'Business shirts': { multiplier: 0.4, essential: true, min: 2 },
+            'Formal trousers': { multiplier: 0.3, essential: true, min: 2 },
+            'Formal shoes': { multiplier: 0, essential: true },
+            'Blazer/jacket': { multiplier: 0, essential: true },
+            'Ties': { multiplier: 0.4, essential: false, min: 2 },
+            'Business cards': { multiplier: 0, essential: true },
+            'Laptop & charger': { multiplier: 0, essential: true },
+            'Notebook & pens': { multiplier: 0, essential: true }
+        }
+    },
+    beach: {
+        trigger: () => document.getElementById('activity-beach')?.checked,
+        items: {
+            'Swimwear': { multiplier: 0.4, essential: true, min: 2 },
+            'Beach towel': { multiplier: 0, essential: true },
+            'Flip flops': { multiplier: 0, essential: true },
+            'Waterproof phone case': { multiplier: 0, essential: false },
+            'Beach bag': { multiplier: 0, essential: false }
+        }
+    },
+    photography: {
+        trigger: () => document.getElementById('activity-photography')?.checked,
+        items: {
+            'Camera equipment': { multiplier: 0, essential: true },
+            'Extra memory cards': { multiplier: 0, essential: true },
+            'Camera batteries': { multiplier: 0, essential: true },
+            'Tripod': { multiplier: 0, essential: false },
+            'Lens cleaning kit': { multiplier: 0, essential: false }
+        }
+    },
+    workout: {
+        trigger: () => document.getElementById('activity-workout')?.checked,
+        items: {
+            'Workout clothes': { multiplier: 0.4, essential: true },
+            'Sports shoes': { multiplier: 0, essential: true },
+            'Sports socks': { multiplier: 0.6, essential: true },
+            'Gym towel': { multiplier: 0, essential: false }
+        }
+    }
+},
             duration: {
                 short: {
                     trigger: (nights) => nights <= 3,
@@ -985,7 +964,7 @@ function generateTripList() {
             
             // Activity-based items
             for (const [activity, config] of Object.entries(conditionalItems.activities)) {
-                if (config.trigger(currentTrip.notes, currentTrip.tripType)) {
+               if (config.trigger()) {
                     const categoryName = activity === 'business' ? 'business_items' : 
                                        activity === 'beach' ? 'beach_gear' :
                                        activity === 'hiking' ? 'hiking_gear' :
