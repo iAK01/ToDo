@@ -661,6 +661,282 @@ select {
     -moz-appearance: none;
 }
 
+/* NEW: Enhanced trip summary styling */
+.trip-summary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.trip-summary h4 {
+    margin-bottom: 20px;
+    font-size: 1.4em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.trip-basic-info p {
+    margin-bottom: 10px;
+    opacity: 0.95;
+    font-size: 1.05em;
+}
+
+.smart-recommendations {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.smart-recommendations h5 {
+    margin-bottom: 12px;
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.recommendation {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.95em;
+}
+
+.recommendation:last-child {
+    border-bottom: none;
+}
+
+.summary-footer {
+    margin-top: 15px;
+    font-size: 0.9em;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+/* NEW: Smart insights section */
+.smart-insights {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 30px;
+    border: 2px solid #dee2e6;
+}
+
+.smart-insights h4 {
+    color: #495057;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.insights-grid {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.insight-item {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #4facfe;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    font-size: 0.95em;
+    color: #495057;
+}
+
+.packing-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+    color: #4facfe;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* NEW: Enhanced category styling */
+.high-priority-category .category-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.transportation-category .category-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.accommodation-category .category-header {
+    background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+}
+
+.category-complete .category-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.category-complete .category-header::after {
+    content: "✓";
+    margin-left: 10px;
+    font-size: 1.2em;
+}
+
+/* NEW: Category badges */
+.category-badge-priority {
+    background: #dc3545;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.category-badge-transport {
+    background: #28a745;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.category-badge-accommodation {
+    background: #fd7e14;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* NEW: Category descriptions */
+.category-desc {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin: 10px 0 20px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #4facfe;
+}
+
+/* NEW: Enhanced item styling */
+.essential-item {
+    border-left: 4px solid #dc3545;
+}
+
+.custom-item {
+    border-left: 4px solid #28a745;
+}
+
+.item-custom {
+    background: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.item-badge-essential {
+    background: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+.item-badge-custom {
+    background: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+
+.item-metadata {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Responsive updates for new elements */
+@media (max-width: 768px) {
+    .checkbox-group {
+        gap: 12px;
+    }
+    
+    .checkbox-group label {
+        padding: 12px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+    
+    .smart-tips {
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .smart-tips li {
+        padding: 10px 0;
+        font-size: 0.9em;
+    }
+    
+    .smart-insights {
+        padding: 20px;
+    }
+    
+    .packing-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .insights-grid {
+        gap: 10px;
+    }
+    
+    .trip-summary {
+        padding: 20px;
+    }
+    
+    .smart-recommendations {
+        padding: 12px;
+    }
+}
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
 /* Responsive updates for new elements */
 @media (max-width: 768px) {
     .checkbox-group {
