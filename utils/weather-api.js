@@ -1,68 +1,69 @@
-// Weather API utility - handles weather data fetching with fallback to Open-Meteo
 export class WeatherAPI {
     constructor() {
-        // Free weatherapi.com key
         this.apiKey = '90c4c9014ba54aecadd160109231806';
         this.baseUrl = 'https://api.weatherapi.com/v1/forecast.json';
     }
 
-  async getWeather(location, days, startDate = new Date()) {
-    const today = new Date();
-    const start = new Date(startDate);
-    const diffDays = Math.round((start - today) / (1000 * 60 * 60 * 24));
+    async getWeather(location, days, startDate = new Date()) {
+        const today = new Date();
+        const start = new Date(startDate);
+        const diffDays = Math.round((start - today) / (1000 * 60 * 60 * 24));
 
-    // ✅ Use Open-Meteo if:
-    // - trip is longer than 3 days
-    // - OR trip starts more than 3 days in the future
-    if (days > 3 || diffDays > 3) {
-        console.warn('Using Open-Meteo due to extended forecast need');
-        return await this.getOpenMeteoWeather(location, startDate, days);
+        const useWeatherAPI = diffDays <= 3;
+        const weatherApiDays = useWeatherAPI ? Math.min(3 - diffDays, days) : 0;
+        const openMeteoDays = days - weatherApiDays;
+
+        let forecast = [];
+
+        if (weatherApiDays > 0) {
+            try {
+                const weatherData = await this.getWeatherAPIData(location, weatherApiDays);
+                forecast.push(...weatherData);
+            } catch (err) {
+                console.warn('WeatherAPI failed, using Open-Meteo only');
+            }
+        }
+
+        if (openMeteoDays > 0) {
+            const openMeteoStart = new Date(start);
+            openMeteoStart.setDate(openMeteoStart.getDate() + weatherApiDays);
+            const openMeteoData = await this.getOpenMeteoWeather(location, openMeteoStart, openMeteoDays);
+            forecast.push(...openMeteoData);
+        }
+
+        return forecast;
     }
 
-    // Otherwise use WeatherAPI (for short trips in the next 3 days)
-    try {
+    async getWeatherAPIData(location, days) {
         const url = `${this.baseUrl}?key=${this.apiKey}&q=${encodeURIComponent(location)}&days=${days}&aqi=no&alerts=no`;
-        const response = await fetch(url);
-        const data = await response.json();
+        const res = await fetch(url);
+        const data = await res.json();
 
         if (data.error) throw new Error(data.error.message);
 
-        return this.processWeatherData(data);
-    } catch (error) {
-        console.warn('WeatherAPI failed, falling back to Open-Meteo:', error.message);
-        return await this.getOpenMeteoWeather(location, startDate, days);
-    }
-}
-
-    processWeatherData(data) {
-        const weatherData = [];
-
-        data.forecast.forecastday.forEach(day => {
+        return data.forecast.forecastday.map(day => {
             const date = new Date(day.date);
             const condition = day.day.condition.text;
             const temp = Math.round(day.day.avgtemp_c);
-            const icon = this.getWeatherIcon(condition, temp);
-
-            weatherData.push({
+            return {
                 date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-                condition: condition,
-                temp: temp,
-                icon: icon,
+                condition,
+                temp,
+                icon: this.getWeatherIcon(condition, temp),
                 humidity: day.day.avghumidity,
                 chanceOfRain: day.day.daily_chance_of_rain,
                 maxTemp: Math.round(day.day.maxtemp_c),
                 minTemp: Math.round(day.day.mintemp_c),
                 wind: day.day.maxwind_kph,
-                uv: day.day.uv
-            });
+                uv: day.day.uv,
+                source: 'WeatherAPI'
+            };
         });
-
-        return weatherData;
     }
 
     async getOpenMeteoWeather(location, startDate, days) {
         const coords = await this.geocodeLocation(location);
-        if (!coords) throw new Error('Failed to geocode location for Open-Meteo');
+        if (!coords) throw new Error('Failed to geocode for Open-Meteo');
 
         const start = new Date(startDate);
         const end = new Date(start);
@@ -78,15 +79,16 @@ export class WeatherAPI {
             const temp = Math.round((data.daily.temperature_2m_max[i] + data.daily.temperature_2m_min[i]) / 2);
             return {
                 date: new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-                condition: condition,
-                temp: temp,
+                condition,
+                temp,
                 icon: this.getWeatherIcon(condition, temp),
                 humidity: null,
                 chanceOfRain: Math.min(data.daily.precipitation_sum[i] * 10, 100),
                 maxTemp: Math.round(data.daily.temperature_2m_max[i]),
                 minTemp: Math.round(data.daily.temperature_2m_min[i]),
                 wind: null,
-                uv: null
+                uv: null,
+                source: 'Open-Meteo'
             };
         });
     }
@@ -129,54 +131,14 @@ export class WeatherAPI {
     getWeatherIcon(condition, temp = 20) {
         const conditionLower = condition.toLowerCase();
 
-        if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) {
-            return '🌧️';
-        } else if (conditionLower.includes('storm') || conditionLower.includes('thunder')) {
-            return '⛈️';
-        } else if (conditionLower.includes('snow') || conditionLower.includes('sleet')) {
-            return '❄️';
-        } else if (conditionLower.includes('mist') || conditionLower.includes('fog')) {
-            return '🌫️';
-        } else if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) {
-            return '☁️';
-        } else if (conditionLower.includes('partly cloudy')) {
-            return '⛅';
-        } else if (conditionLower.includes('sunny') || conditionLower.includes('clear')) {
-            return temp > 30 ? '🌞' : '☀️';
-        } else if (temp < 5) {
-            return '🥶';
-        } else {
-            return '🌤️';
-        }
-    }
-
-    getFallbackWeather(days) {
-        const weatherData = [];
-        const startDate = new Date();
-
-        for (let i = 0; i < Math.min(days, 7); i++) {
-            const date = new Date(startDate);
-            date.setDate(date.getDate() + i);
-
-            const seed = date.getDate() + date.getMonth();
-            const temp = 15 + (seed % 15) - 5;
-            const conditions = ['Partly Cloudy', 'Sunny', 'Cloudy', 'Light Rain'];
-            const condition = conditions[seed % conditions.length];
-
-            weatherData.push({
-                date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-                condition: condition,
-                temp: temp,
-                icon: this.getWeatherIcon(condition, temp),
-                humidity: 40 + (seed % 40),
-                chanceOfRain: condition.includes('Rain') ? 60 : 20,
-                maxTemp: temp + 5,
-                minTemp: temp - 5,
-                wind: 10 + (seed % 20),
-                uv: 3 + (seed % 5)
-            });
-        }
-
-        return weatherData;
+        if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) return '🌧️';
+        if (conditionLower.includes('storm') || conditionLower.includes('thunder')) return '⛈️';
+        if (conditionLower.includes('snow') || conditionLower.includes('sleet')) return '❄️';
+        if (conditionLower.includes('mist') || conditionLower.includes('fog')) return '🌫️';
+        if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) return '☁️';
+        if (conditionLower.includes('partly cloudy')) return '⛅';
+        if (conditionLower.includes('sunny') || conditionLower.includes('clear')) return temp > 30 ? '🌞' : '☀️';
+        if (temp < 5) return '🥶';
+        return '🌤️';
     }
 }
