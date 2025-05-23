@@ -56,6 +56,192 @@ export const conditionalRules = {
         }
     },
     
+    // NEW: Transportation-based conditional items
+    transportation: {
+        plane: {
+            trigger: (transportType) => transportType === 'plane',
+            categories: ['flight_essentials', 'carry_on_compliance', 'flight_comfort'],
+            items: {
+                flight_essentials: {
+                    'Boarding pass': { multiplier: 0, essential: true },
+                    'Passport/ID easily accessible': { multiplier: 0, essential: true },
+                    'Phone with boarding pass': { multiplier: 0, essential: true }
+                },
+                carry_on_compliance: {
+                    'TSA-compliant toiletries': { multiplier: 0, essential: true },
+                    'Clear quart bag for liquids': { multiplier: 0, essential: true },
+                    'Laptop in easy-access bag': { multiplier: 0, essential: true },
+                    'No prohibited items': { multiplier: 0, essential: true }
+                },
+                flight_comfort: {
+                    'Neck pillow': { multiplier: 0, essential: false },
+                    'Eye mask': { multiplier: 0, essential: false },
+                    'Earplugs/noise-canceling headphones': { multiplier: 0, essential: false },
+                    'Compression socks': { multiplier: 0, essential: false },
+                    'Hydration (empty bottle)': { multiplier: 0, essential: true },
+                    'Entertainment device': { multiplier: 0, essential: false }
+                }
+            }
+        },
+        international_flight: {
+            trigger: (transportType, tripData) => 
+                transportType === 'plane' && this.isInternationalTrip(tripData),
+            items: {
+                'Passport with 6+ months validity': { multiplier: 0, essential: true },
+                'Visa documents': { multiplier: 0, essential: true },
+                'Travel insurance documents': { multiplier: 0, essential: true },
+                'Emergency contact info': { multiplier: 0, essential: true },
+                'Currency converter app': { multiplier: 0, essential: false },
+                'Universal power adapter': { multiplier: 0, essential: true },
+                'Jet lag remedies': { multiplier: 0, essential: false }
+            }
+        },
+        long_haul_flight: {
+            trigger: (transportType, tripData) => 
+                transportType === 'plane' && tripData.flightDuration > 6,
+            items: {
+                'Extra entertainment': { multiplier: 0, essential: true },
+                'Comfortable clothing layers': { multiplier: 0, essential: true },
+                'Skincare for dry air': { multiplier: 0, essential: false },
+                'Compression socks': { multiplier: 0, essential: true },
+                'Melatonin for sleep': { multiplier: 0, essential: false },
+                'Healthy snacks': { multiplier: 0, essential: false }
+            }
+        },
+        car: {
+            trigger: (transportType) => transportType === 'car',
+            items: {
+                'Valid driver\'s license': { multiplier: 0, essential: true },
+                'Car registration': { multiplier: 0, essential: true },
+                'Insurance card': { multiplier: 0, essential: true },
+                'Emergency roadside kit': { multiplier: 0, essential: true },
+                'Phone car charger': { multiplier: 0, essential: true },
+                'Cash for tolls': { multiplier: 0, essential: true },
+                'Paper maps backup': { multiplier: 0, essential: false },
+                'First aid kit': { multiplier: 0, essential: true },
+                'Road trip snacks': { multiplier: 0.3, essential: false }
+            }
+        },
+        ferry: {
+            trigger: (transportType) => transportType === 'ferry',
+            items: {
+                'Motion sickness medication': { multiplier: 0, essential: false },
+                'Waterproof bag for electronics': { multiplier: 0, essential: true },
+                'Warm jacket for deck': { multiplier: 0, essential: true },
+                'Entertainment for long crossings': { multiplier: 0, essential: false },
+                'Comfortable shoes with grip': { multiplier: 0, essential: true }
+            }
+        }
+    },
+
+    // NEW: Accommodation-based conditional items
+    accommodation: {
+        hotel: {
+            trigger: (accommodationType) => accommodationType === 'hotel',
+            items: {
+                'Personal toiletries only': { 
+                    multiplier: 0, 
+                    essential: true,
+                    description: 'Hotel provides basics'
+                },
+                'Tip money for housekeeping': { multiplier: 0, essential: false },
+                'Hotel confirmation': { multiplier: 0, essential: true },
+                'Loyalty program info': { multiplier: 0, essential: false }
+            }
+        },
+        luxury_hotel: {
+            trigger: (accommodationType, tripData) => 
+                accommodationType === 'hotel' && tripData.luxuryLevel === 'high',
+            items: {
+                'Formal dinner attire': { multiplier: 0, essential: true },
+                'Dress shoes': { multiplier: 0, essential: true },
+                'Upscale casual wear': { multiplier: 0.3, essential: true }
+            }
+        },
+        airbnb: {
+            trigger: (accommodationType) => accommodationType === 'airbnb',
+            items: {
+                'All personal toiletries': { multiplier: 0, essential: true },
+                'Basic cooking supplies': { multiplier: 0, essential: false },
+                'Cleaning supplies': { multiplier: 0, essential: true },
+                'Laundry detergent': { multiplier: 0, essential: false },
+                'Coffee/tea': { multiplier: 0, essential: false },
+                'Breakfast basics': { multiplier: 0, essential: false },
+                'Check-in instructions': { multiplier: 0, essential: true },
+                'Host contact info': { multiplier: 0, essential: true }
+            }
+        },
+        hostel: {
+            trigger: (accommodationType) => accommodationType === 'hostel',
+            items: {
+                'Padlock for lockers': { multiplier: 0, essential: true },
+                'Quick-dry towel': { multiplier: 0, essential: true },
+                'Flip flops for showers': { multiplier: 0, essential: true },
+                'Earplugs': { multiplier: 0, essential: true },
+                'Eye mask': { multiplier: 0, essential: true },
+                'Money belt/security wallet': { multiplier: 0, essential: true },
+                'Toiletry caddy': { multiplier: 0, essential: true }
+            }
+        },
+        camping: {
+            trigger: (accommodationType) => accommodationType === 'camping',
+            items: {
+                'Complete camping setup': { multiplier: 0, essential: true },
+                'All food and water': { multiplier: 0, essential: true },
+                'Camping stove and fuel': { multiplier: 0, essential: true },
+                'Biodegradable soap': { multiplier: 0, essential: true },
+                'Insect repellent': { multiplier: 0, essential: true },
+                'Headlamp and backup batteries': { multiplier: 0, essential: true },
+                'Weather protection': { multiplier: 0, essential: true }
+            }
+        },
+        family_friends: {
+            trigger: (accommodationType) => accommodationType === 'family',
+            items: {
+                'Host gift': { multiplier: 0, essential: true },
+                'Contribution to meals': { multiplier: 0, essential: true },
+                'Personal toiletries': { multiplier: 0, essential: true },
+                'Thank you card': { multiplier: 0, essential: true },
+                'Respectful house clothes': { multiplier: 0, essential: true },
+                'Personal towel (optional)': { multiplier: 0, essential: false }
+            }
+        }
+    },
+
+    // NEW: Combination rules (transportation + accommodation)
+    combinations: {
+        flight_hotel: {
+            trigger: (transportType, accommodationType) => 
+                transportType === 'plane' && accommodationType === 'hotel',
+            items: {
+                'Hotel shuttle info': { multiplier: 0, essential: false },
+                'Airport transfer plan': { multiplier: 0, essential: true },
+                'Luggage tags': { multiplier: 0, essential: true }
+            }
+        },
+        flight_international_hotel: {
+            trigger: (transportType, accommodationType, tripData) => 
+                transportType === 'plane' && accommodationType === 'hotel' && 
+                this.isInternationalTrip(tripData),
+            items: {
+                'Currency for taxi/tips': { multiplier: 0, essential: true },
+                'Hotel address in local language': { multiplier: 0, essential: true },
+                'Customs declaration forms': { multiplier: 0, essential: true }
+            }
+        },
+        car_camping: {
+            trigger: (transportType, accommodationType) => 
+                transportType === 'car' && accommodationType === 'camping',
+            items: {
+                'Car camping gear': { multiplier: 0, essential: true },
+                'Cooler for car transport': { multiplier: 0, essential: true },
+                'Extra fuel containers': { multiplier: 0, essential: false },
+                'Emergency car supplies': { multiplier: 0, essential: true }
+            }
+        }
+    },
+
+    // Updated temperature clothing (existing code)
     temperatureClothing: {
         freezing: {
             trigger: (avgTemp) => avgTemp < 0,
@@ -240,6 +426,40 @@ export const conditionalRules = {
         {
             replacingItems: ['Hiking boots'],
             replacedItems: ['Dress shoes only']
+        },
+        // NEW: Transportation-specific replacements
+        {
+            replacingItems: ['TSA-compliant toiletries'],
+            replacedItems: ['Large toiletry bottles', 'Prohibited items']
+        },
+        {
+            replacingItems: ['Hotel confirmation'],
+            replacedItems: ['Camping gear', 'Cooking supplies']
+        },
+        {
+            replacingItems: ['Padlock for lockers'],
+            replacedItems: ['Expensive jewelry', 'Valuable electronics']
         }
-    ]
+    ],
+
+    // NEW: Helper functions for complex logic
+    isInternationalTrip: (tripData) => {
+        // Simple logic - could be enhanced with country detection
+        return tripData.location && (
+            tripData.location.includes(',') || 
+            tripData.notes?.toLowerCase().includes('international') ||
+            tripData.notes?.toLowerCase().includes('passport')
+        );
+    },
+
+    // NEW: Priority system for conflicting rules
+    rulePriority: {
+        transportation: 10,  // Highest priority
+        accommodation: 9,
+        weather: 8,
+        activities: 7,
+        tripTypes: 6,
+        duration: 5,
+        temperatureClothing: 4  // Lowest priority
+    }
 };
