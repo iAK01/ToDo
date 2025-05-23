@@ -85,7 +85,7 @@ export const conditionalRules = {
         },
         international_flight: {
             trigger: (transportType, tripData) => 
-                transportType === 'plane' && this.isInternationalTrip(tripData),
+                transportType === 'plane' && conditionalRules.isInternationalTrip(tripData),
             items: {
                 'Passport with 6+ months validity': { multiplier: 0, essential: true },
                 'Visa documents': { multiplier: 0, essential: true },
@@ -222,7 +222,7 @@ export const conditionalRules = {
         flight_international_hotel: {
             trigger: (transportType, accommodationType, tripData) => 
                 transportType === 'plane' && accommodationType === 'hotel' && 
-                this.isInternationalTrip(tripData),
+                conditionalRules.isInternationalTrip(tripData),
             items: {
                 'Currency for taxi/tips': { multiplier: 0, essential: true },
                 'Hotel address in local language': { multiplier: 0, essential: true },
@@ -442,13 +442,26 @@ export const conditionalRules = {
         }
     ],
 
-    // NEW: Helper functions for complex logic
+    // Helper functions for complex logic
     isInternationalTrip: (tripData) => {
-        // Simple logic - could be enhanced with country detection
-        return tripData.location && (
-            tripData.location.includes(',') || 
-            tripData.notes?.toLowerCase().includes('international') ||
-            tripData.notes?.toLowerCase().includes('passport')
+        if (!tripData.location) return false;
+        
+        const location = tripData.location.toLowerCase();
+        const notes = (tripData.notes || '').toLowerCase();
+        
+        // Enhanced detection logic
+        return (
+            location.includes(',') || 
+            notes.includes('international') ||
+            notes.includes('passport') ||
+            notes.includes('visa') ||
+            location.includes('europe') ||
+            location.includes('asia') ||
+            location.includes('uk') ||
+            location.includes('canada') ||
+            location.includes('mexico') ||
+            // Add more country/region detection as needed
+            /\b(france|spain|italy|germany|japan|china|india|brazil)\b/.test(location)
         );
     },
 
