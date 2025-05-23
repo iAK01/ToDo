@@ -19,6 +19,11 @@ class SmartTripPlanner {
                 startDate: '',
                 notes: '',
                 activities: [],
+                // NEW: Transportation and accommodation fields
+                transportation: '',
+                accommodation: '',
+                transportationOptions: [],
+                accommodationOptions: [],
                 weather: null,
                 items: {},
                 completedItems: []
@@ -104,11 +109,38 @@ class SmartTripPlanner {
 
     async handleGenerateTrip(tripData) {
         try {
-            // Update state with trip data
+            // Update state with trip data (including new transport/accommodation fields)
             Object.assign(this.state.trip, tripData);
 
-            // Show loading state
-            this.notification.show('Generating your smart packing list...', 'info');
+            // Show enhanced loading state
+            this.notification.show('🧠 Analyzing your trip requirements...', 'info', 2000);
+            
+            // NEW: Show transport/accommodation specific loading messages
+            setTimeout(() => {
+                if (tripData.transportation) {
+                    const transportMessages = {
+                        'plane': '✈️ Adding flight-specific items and TSA compliance...',
+                        'car': '🚗 Including road trip essentials and emergency kit...',
+                        'train': '🚊 Adding train comfort items...',
+                        'ferry': '⛴️ Including ferry travel preparations...',
+                        'bus': '🚌 Adding bus travel comfort items...'
+                    };
+                    this.notification.show(transportMessages[tripData.transportation] || 'Adding transportation items...', 'info', 2000);
+                }
+            }, 1000);
+
+            setTimeout(() => {
+                if (tripData.accommodation) {
+                    const accommodationMessages = {
+                        'hotel': '🏨 Optimizing for hotel stay (toiletries provided)...',
+                        'airbnb': '🏠 Adding vacation rental essentials (bring everything)...',
+                        'camping': '⛺ Including complete camping setup...',
+                        'hostel': '🏨 Adding hostel security and shared facility items...',
+                        'family': '👨‍👩‍👧‍👦 Including courtesy items for family stay...'
+                    };
+                    this.notification.show(accommodationMessages[tripData.accommodation] || 'Adding accommodation items...', 'info', 2000);
+                }
+            }, 2000);
 
             // Fetch weather data
             if (tripData.location) {
@@ -116,7 +148,7 @@ class SmartTripPlanner {
                 this.state.trip.weather = this.weatherDisplay.getWeatherData();
             }
 
-            // Generate items based on all parameters
+            // Generate items based on all parameters (enhanced with transport/accommodation)
             const generatedItems = await this.listGenerator.generateItems({
                 ...tripData,
                 weather: this.state.trip.weather
@@ -133,12 +165,65 @@ class SmartTripPlanner {
             // Save state
             this.storage.saveTrip(this.state.trip);
 
-            this.notification.show('Smart packing list generated! 🎯', 'success');
+            // NEW: Enhanced success notification with context
+            const contextInfo = [];
+            if (tripData.transportation) contextInfo.push(tripData.transportation);
+            if (tripData.accommodation) contextInfo.push(tripData.accommodation);
+            
+            const contextText = contextInfo.length > 0 ? ` for ${contextInfo.join(' + ')}` : '';
+            this.notification.show(`🎯 Smart packing list generated${contextText}!`, 'success', 4000);
+
+            // NEW: Show additional insights
+            this.showGenerationInsights(tripData, generatedItems);
 
         } catch (error) {
             console.error('Error generating trip:', error);
             this.notification.show('Failed to generate list. Please try again.', 'error');
         }
+    }
+
+    // NEW: Show insights about what was generated
+    showGenerationInsights(tripData, items) {
+        const insights = [];
+        const categoryCount = Object.keys(items).length;
+        let totalItems = 0;
+        
+        for (const categoryItems of Object.values(items)) {
+            totalItems += Object.keys(categoryItems).length;
+        }
+
+        // Transport-specific insights
+        if (tripData.transportation === 'plane') {
+            if (tripData.transportationOptions?.includes('international')) {
+                insights.push('🌍 International flight requirements added');
+            }
+            if (tripData.transportationOptions?.includes('carryonly')) {
+                insights.push('🧳 Carry-on restrictions applied');
+            }
+        }
+
+        // Accommodation-specific insights
+        if (tripData.accommodation === 'hotel') {
+            insights.push('🏨 Hotel amenities considered - basic toiletries excluded');
+        } else if (tripData.accommodation === 'camping') {
+            insights.push('⛺ Complete camping self-sufficiency included');
+        }
+
+        // Show summary insight
+        setTimeout(() => {
+            this.notification.show(
+                `📊 Generated ${totalItems} items across ${categoryCount} categories`, 
+                'info', 
+                3000
+            );
+        }, 3000);
+
+        // Show specific insights
+        insights.forEach((insight, index) => {
+            setTimeout(() => {
+                this.notification.show(insight, 'info', 2500);
+            }, 4000 + (index * 1500));
+        });
     }
 
     handleItemToggle(category, itemName) {
@@ -153,13 +238,28 @@ class SmartTripPlanner {
             // Save state
             this.storage.saveTrip(this.state.trip);
 
-            // Show notification
+            // NEW: Enhanced notifications with category context
+            const categoryName = this.getCategoryDisplayName(category);
             if (item.completed) {
-                this.notification.show(`✅ ${itemName} packed!`, 'success');
+                this.notification.show(`✅ ${itemName} packed! (${categoryName})`, 'success', 2000);
             } else {
-                this.notification.show(`📦 ${itemName} unpacked`, 'info');
+                this.notification.show(`📦 ${itemName} unpacked (${categoryName})`, 'info', 2000);
             }
         }
+    }
+
+    // NEW: Get friendly category display name
+    getCategoryDisplayName(categoryKey) {
+        const categoryNames = {
+            'flight_essentials': 'Flight Essentials',
+            'carry_on_items': 'Carry-On',
+            'hotel_essentials': 'Hotel',
+            'airbnb_essentials': 'Vacation Rental',
+            'car_travel': 'Road Trip',
+            'international_travel': 'International',
+            // Add more as needed...
+        };
+        return categoryNames[categoryKey] || categoryKey.replace('_', ' ');
     }
 
     handleItemAdd(category, itemName, quantity) {
@@ -172,17 +272,18 @@ class SmartTripPlanner {
             essential: false,
             completed: false,
             notes: '',
-            custom: true
+            custom: true // NEW: Mark as custom item
         };
 
         // Re-render checklist
-        this.checklistDisplay.render(this.state.trip.items);
+        this.checklistDisplay.render(this.state.trip.items, this.state.trip);
         this.progressTracking.update(this.calculateProgress());
 
         // Save state
         this.storage.saveTrip(this.state.trip);
 
-        this.notification.show(`Added "${itemName}" to ${category}`, 'success');
+        const categoryName = this.getCategoryDisplayName(category);
+        this.notification.show(`✨ Added "${itemName}" to ${categoryName}`, 'success');
     }
 
     handleNoteUpdate(category, itemName, note) {
@@ -194,15 +295,45 @@ class SmartTripPlanner {
 
     async handleSave() {
         const savedTrips = await this.storage.getSavedTrips();
-        const tripName = prompt('Enter a name for this trip:', 
-            `${this.state.trip.location} - ${this.state.trip.tripType}`);
+        
+        // NEW: Generate smarter default name
+        const defaultName = this.generateTripName(this.state.trip);
+        const tripName = prompt('Enter a name for this trip:', defaultName);
         
         if (!tripName) return;
 
         savedTrips[tripName] = { ...this.state.trip };
         this.storage.saveTripToLibrary(tripName, this.state.trip);
         
-        this.notification.show(`Trip "${tripName}" saved!`, 'success');
+        // NEW: Enhanced save notification
+        const context = [];
+        if (this.state.trip.transportation) context.push(this.state.trip.transportation);
+        if (this.state.trip.accommodation) context.push(this.state.trip.accommodation);
+        const contextText = context.length > 0 ? ` (${context.join(' + ')})` : '';
+        
+        this.notification.show(`💾 Trip "${tripName}" saved${contextText}!`, 'success');
+    }
+
+    // NEW: Generate smart trip name
+    generateTripName(trip) {
+        const parts = [];
+        
+        if (trip.location) parts.push(trip.location);
+        if (trip.tripType && trip.tripType !== 'leisure') parts.push(trip.tripType);
+        
+        // Add transport/accommodation context if notable
+        if (trip.transportation === 'car' && trip.accommodation === 'camping') {
+            parts.push('car camping');
+        } else if (trip.accommodation === 'hostel') {
+            parts.push('hostel trip');
+        } else if (trip.transportation === 'plane' && trip.transportationOptions?.includes('international')) {
+            parts.push('international');
+        }
+        
+        const date = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        parts.push(date);
+        
+        return parts.join(' - ');
     }
 
     async handleLoadTrip() {
@@ -214,8 +345,18 @@ class SmartTripPlanner {
             return;
         }
 
+        // NEW: Enhanced trip selection with context
+        const tripOptions = tripNames.map((name, i) => {
+            const trip = savedTrips[name];
+            const context = [];
+            if (trip.transportation) context.push(trip.transportation);
+            if (trip.accommodation) context.push(trip.accommodation);
+            const contextText = context.length > 0 ? ` (${context.join(' + ')})` : '';
+            return `${i + 1}. ${name}${contextText}`;
+        }).join('\n');
+
         const tripName = prompt(
-            `Choose a trip to load:\n${tripNames.map((name, i) => `${i + 1}. ${name}`).join('\n')}\n\nEnter trip name:`
+            `Choose a trip to load:\n${tripOptions}\n\nEnter trip name:`
         );
 
         if (tripName && savedTrips[tripName]) {
@@ -226,13 +367,19 @@ class SmartTripPlanner {
             this.updateAllComponents();
             this.showAllSections();
 
-            this.notification.show(`Loaded trip "${tripName}"`, 'success');
+            // NEW: Context-aware load notification
+            const context = [];
+            if (this.state.trip.transportation) context.push(this.state.trip.transportation);
+            if (this.state.trip.accommodation) context.push(this.state.trip.accommodation);
+            const contextText = context.length > 0 ? ` (${context.join(' + ')})` : '';
+
+            this.notification.show(`📂 Loaded trip "${tripName}"${contextText}`, 'success');
         }
     }
 
     handleResetTrip() {
         if (confirm('Are you sure you want to reset everything? This will clear your current trip and all progress.')) {
-            // Reset state
+            // Reset state (including new fields)
             this.state.trip = {
                 location: '',
                 nights: 5,
@@ -240,6 +387,10 @@ class SmartTripPlanner {
                 startDate: '',
                 notes: '',
                 activities: [],
+                transportation: '', // NEW
+                accommodation: '', // NEW
+                transportationOptions: [], // NEW
+                accommodationOptions: [], // NEW
                 weather: null,
                 items: {},
                 completedItems: []
@@ -252,25 +403,43 @@ class SmartTripPlanner {
             // Clear storage
             this.storage.clearCurrentTrip();
 
-            this.notification.show('Trip reset successfully!', 'info');
+            this.notification.show('🔄 Trip reset successfully!', 'info');
         }
     }
 
     async handleExport() {
+        // NEW: Enhanced export with transport/accommodation context
         const exportText = await this.listGenerator.exportToText(this.state.trip);
+        
+        // Create filename with transport/accommodation context
+        const filenameParts = [
+            'packing-list',
+            this.state.trip.location.replace(/[^a-zA-Z0-9]/g, '-'),
+        ];
+        
+        if (this.state.trip.transportation) {
+            filenameParts.push(this.state.trip.transportation);
+        }
+        if (this.state.trip.accommodation) {
+            filenameParts.push(this.state.trip.accommodation);
+        }
+        
+        filenameParts.push(new Date().toISOString().split('T')[0]);
+        
+        const filename = filenameParts.join('-') + '.txt';
         
         // Create download
         const blob = new Blob([exportText], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `packing-list-${this.state.trip.location.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.txt`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        this.notification.show('Packing list exported!', 'success');
+        this.notification.show('📤 Enhanced packing list exported!', 'success');
     }
 
     calculateProgress() {
@@ -297,7 +466,7 @@ class SmartTripPlanner {
             this.weatherDisplay.render(this.state.trip.weather);
         }
 
-        // Update checklist
+        // Update checklist with enhanced trip data
         this.checklistDisplay.render(this.state.trip.items, this.state.trip);
 
         // Update progress
@@ -320,12 +489,30 @@ class SmartTripPlanner {
         const savedTrip = await this.storage.getCurrentTrip();
         
         if (savedTrip && savedTrip.location) {
-            this.state.trip = savedTrip;
-            this.tripSetup.loadTripData(savedTrip);
+            // NEW: Ensure backward compatibility with old saved trips
+            this.state.trip = {
+                ...this.state.trip, // Default values
+                ...savedTrip, // Saved values override defaults
+                // Ensure new fields exist even in old saves
+                transportation: savedTrip.transportation || '',
+                accommodation: savedTrip.accommodation || '',
+                transportationOptions: savedTrip.transportationOptions || [],
+                accommodationOptions: savedTrip.accommodationOptions || []
+            };
+            
+            this.tripSetup.loadTripData(this.state.trip);
             
             if (Object.keys(savedTrip.items).length > 0) {
                 this.updateAllComponents();
                 this.showAllSections();
+                
+                // NEW: Show restoration notification with context
+                const context = [];
+                if (this.state.trip.transportation) context.push(this.state.trip.transportation);
+                if (this.state.trip.accommodation) context.push(this.state.trip.accommodation);
+                const contextText = context.length > 0 ? ` (${context.join(' + ')})` : '';
+                
+                this.notification.show(`🔄 Previous trip restored${contextText}`, 'info', 3000);
             }
         }
     }
