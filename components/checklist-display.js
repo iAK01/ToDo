@@ -270,12 +270,21 @@ export class ChecklistDisplay {
                 }
             });
             
-            // Hide categories with no visible items and update their state
+            // Show/hide categories based on whether they have incomplete items
             allCategories.forEach(category => {
-                const visibleItems = category.querySelectorAll('.item:not([style*="display: none"])');
-                const hasVisibleItems = visibleItems.length > 1; // > 1 because add-item section counts as one
+                const incompleteItems = category.querySelectorAll('.item:not(.completed)');
+                const addItemSection = category.querySelector('.add-item-section');
                 
-                if (hasVisibleItems) {
+                // Count actual incomplete items (exclude add-item-section)
+                let actualIncompleteCount = 0;
+                incompleteItems.forEach(item => {
+                    if (!item.classList.contains('add-item-section') && 
+                        !item.querySelector('.add-item-form')) {
+                        actualIncompleteCount++;
+                    }
+                });
+                
+                if (actualIncompleteCount > 0) {
                     category.style.display = 'block';
                     // Auto-expand categories with incomplete items
                     const content = category.querySelector('.category-content');
