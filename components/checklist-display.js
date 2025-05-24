@@ -6,6 +6,9 @@ export class ChecklistDisplay {
         this.onItemAdd = options.onItemAdd;
         this.onNoteUpdate = options.onNoteUpdate;
         
+        // NEW: Filter state
+        this.showIncompleteOnly = false;
+        
         // Enhanced category names including all new transport/accommodation categories
         this.categoryNames = {
             clothes: '👔 Clothes',
@@ -165,6 +168,9 @@ export class ChecklistDisplay {
             this.container.appendChild(summaryDiv);
         }
         
+        // NEW: Add filter controls
+        this.addFilterControls(items);
+        
         // Sort categories by priority
         const sortedCategories = Object.entries(items).sort(([keyA], [keyB]) => {
             const priorityA = this.categoryPriority[keyA] || 999;
@@ -190,6 +196,136 @@ export class ChecklistDisplay {
         
         // Bind events after rendering
         this.bindCategoryEvents();
+        
+        // Apply current filter state
+        this.applyFilter();
+    }
+
+    // NEW: Add filter controls
+    addFilterControls(items) {
+        // Calculate incomplete items
+        let totalItems = 0;
+        let incompleteItems = 0;
+        let incompleteEssentials = 0;
+        
+        for (const categoryItems of Object.values(items)) {
+            for (const item of Object.values(categoryItems)) {
+                totalItems++;
+                if (!item.completed) {
+                    incompleteItems++;
+                    if (item.essential) incompleteEssentials++;
+                }
+            }
+        }
+        
+        // Only show filter if there are items and some are incomplete
+        if (totalItems === 0 || incompleteItems === 0) return;
+        
+        const filterDiv = document.createElement('div');
+        filterDiv.className = 'filter-controls';
+        filterDiv.innerHTML = `
+            <div class="filter-header">
+                <div class="filter-info">
+                    <span class="filter-stats">
+                        📋 ${incompleteItems} items remaining
+                        ${incompleteEssentials > 0 ? `(${incompleteEssentials} essential)` : ''}
+                    </span>
+                </div>
+                <div class="filter-actions">
+                    <button class="filter-toggle" id="filterToggle">
+                        <span class="filter-icon">👁️</span>
+                        <span class="filter-text">Show Incomplete Only</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        this.container.appendChild(filterDiv);
+        
+        // Bind filter toggle event
+        document.getElementById('filterToggle').addEventListener('click', () => {
+            this.toggleFilter();
+        });
+    }
+
+    // NEW: Toggle filter state
+    toggleFilter() {
+        this.showIncompleteOnly = !this.showIncompleteOnly;
+        this.applyFilter();
+        this.updateFilterButton();
+    }
+
+    // NEW: Apply filter to visible items
+    applyFilter() {
+        const allItems = document.querySelectorAll('.item');
+        const allCategories = document.querySelectorAll('.category');
+        
+        if (this.showIncompleteOnly) {
+            // Hide completed items
+            allItems.forEach(item => {
+                if (item.classList.contains('completed')) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = 'flex';
+                }
+            });
+            
+            // Hide categories with no visible items and update their state
+            allCategories.forEach(category => {
+                const visibleItems = category.querySelectorAll('.item:not([style*="display: none"])');
+                const hasVisibleItems = visibleItems.length > 1; // > 1 because add-item section counts as one
+                
+                if (hasVisibleItems) {
+                    category.style.display = 'block';
+                    // Auto-expand categories with incomplete items
+                    const content = category.querySelector('.category-content');
+                    if (content && !content.classList.contains('expanded')) {
+                        content.classList.add('expanded');
+                        category.classList.add('expanded');
+                        const toggle = category.querySelector('.toggle-icon');
+                        if (toggle) toggle.style.transform = 'rotate(180deg)';
+                    }
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+            
+            // Add filter active class
+            document.body.classList.add('filter-active');
+            
+        } else {
+            // Show all items
+            allItems.forEach(item => {
+                item.style.display = 'flex';
+            });
+            
+            // Show all categories
+            allCategories.forEach(category => {
+                category.style.display = 'block';
+            });
+            
+            // Remove filter active class
+            document.body.classList.remove('filter-active');
+        }
+    }
+
+    // NEW: Update filter button text
+    updateFilterButton() {
+        const filterButton = document.getElementById('filterToggle');
+        if (!filterButton) return;
+        
+        const icon = filterButton.querySelector('.filter-icon');
+        const text = filterButton.querySelector('.filter-text');
+        
+        if (this.showIncompleteOnly) {
+            icon.textContent = '👀';
+            text.textContent = 'Show All Items';
+            filterButton.classList.add('active');
+        } else {
+            icon.textContent = '👁️';
+            text.textContent = 'Show Incomplete Only';
+            filterButton.classList.remove('active');
+        }
     }
 
     // NEW: Generate enhanced trip summary with transport/accommodation context
@@ -526,6 +662,12 @@ export class ChecklistDisplay {
                 const category = e.target.getAttribute('data-category');
                 const item = e.target.getAttribute('data-item');
                 this.onItemToggle(category, item);
+                
+                // NEW: Re-apply filter after item toggle to update visibility
+                setTimeout(() => {
+                    this.applyFilter();
+                    this.updateFilterStats();
+                }, 100);
             });
         });
 
@@ -555,6 +697,35 @@ export class ChecklistDisplay {
                 }
             });
         });
+    }
+
+    // NEW: Update filter stats
+    updateFilterStats() {
+        const filterStats = document.querySelector('.filter-stats');
+        if (!filterStats) return;
+        
+        const allItems = document.querySelectorAll('.item:not(.add-item-section)');
+        let incompleteItems = 0;
+        let incompleteEssentials = 0;
+        
+        allItems.forEach(item => {
+            if (!item.classList.contains('completed')) {
+                incompleteItems++;
+                if (item.classList.contains('essential-item')) {
+                    incompleteEssentials++;
+                }
+            }
+        });
+        
+        filterStats.textContent = `📋 ${incompleteItems} items remaining${incompleteEssentials > 0 ? ` (${incompleteEssentials} essential)` : ''}`;
+        
+        // Hide filter controls if no incomplete items
+        if (incompleteItems === 0) {
+            const filterControls = document.querySelector('.filter-controls');
+            if (filterControls) {
+                filterControls.style.display = 'none';
+            }
+        }
     }
 
     toggleCategory(categoryKey) {
