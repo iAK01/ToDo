@@ -1352,3 +1352,126 @@ select {
         gap: 12px;
     }
 }
+/* NEW: Filter Controls */
+.filter-controls {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    border-radius: 14px;
+    padding: 15px 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-info {
+    flex: 1;
+}
+
+.filter-stats {
+    font-weight: 600;
+    color: #856404;
+    font-size: 1.05em;
+}
+
+.filter-actions {
+    flex-shrink: 0;
+}
+
+.filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #fff;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: #856404;
+    font-size: 0.95em;
+}
+
+.filter-toggle:hover {
+    background: #ffc107;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.filter-toggle.active {
+    background: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+.filter-toggle.active:hover {
+    background: #218838;
+    border-color: #1e7e34;
+}
+
+.filter-icon {
+    font-size: 1.1em;
+}
+
+.filter-text {
+    white-space: nowrap;
+}
+
+/* NEW: Filter Active State */
+.filter-active .category {
+    transition: all 0.3s ease;
+}
+
+.filter-active .item.completed {
+    opacity: 0.3;
+    transform: scale(0.98);
+}
+
+/* NEW: Mobile Filter Controls */
+@media (max-width: 768px) {
+    .filter-controls {
+        padding: 12px 15px;
+        margin: 15px 0;
+    }
+    
+    .filter-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    
+    .filter-stats {
+        text-align: center;
+        font-size: 1em;
+    }
+    
+    .filter-toggle {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-controls {
+        border-radius: 12px;
+        padding: 10px 12px;
+    }
+    
+    .filter-stats {
+        font-size: 0.9em;
+    }
+    
+    .filter-toggle {
+        padding: 10px 14px;
+        font-size: 0.9em;
+    }
+}
