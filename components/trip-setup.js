@@ -16,121 +16,155 @@ export class TripSetup {
             <div class="trip-setup" id="tripSetup">
                 <h2>🗺️ Plan Your Trip</h2>
                 
-                <!-- Basic Trip Info -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="location">📍 Destination</label>
-                        <input type="text" id="location" placeholder="e.g., Athens, Greece">
+                <!-- Basic Trip Info Section -->
+                <div class="form-section" id="basicInfoSection">
+                    <div class="section-header" data-toggle="basicInfo">
+                        <h3>📋 Basic Information</h3>
+                        <span class="section-toggle">▼</span>
                     </div>
-                    <div class="form-group">
-                        <label for="nights">🌙 Number of Nights</label>
-                        <input type="number" id="nights" min="1" max="365" value="5">
-                    </div>
-                    <div class="form-group">
-                        <label for="tripType">🎯 Trip Type</label>
-                        <select id="tripType">
-                            <option value="business">Business</option>
-                            <option value="leisure">Leisure</option>
-                            <option value="camping">Camping</option>
-                            <option value="winter-sports">Winter Sports</option>
-                            <option value="beach">Beach</option>
-                            <option value="city-break">City Break</option>
-                        </select>
+                    <div class="section-content expanded" id="basicInfoContent">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="location">📍 Destination</label>
+                                <input type="text" id="location" placeholder="e.g., Athens, Greece">
+                            </div>
+                            <div class="form-group">
+                                <label for="nights">🌙 Number of Nights</label>
+                                <input type="number" id="nights" min="1" max="365" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="startDate">📅 Start Date</label>
+                                <input type="date" id="startDate">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tripType">🎯 Trip Type</label>
+                                <select id="tripType">
+                                    <option value="business">Business</option>
+                                    <option value="leisure">Leisure</option>
+                                    <option value="camping">Camping</option>
+                                    <option value="winter-sports">Winter Sports</option>
+                                    <option value="beach">Beach</option>
+                                    <option value="city-break">City Break</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- NEW: Transportation & Accommodation Row -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="transportation">✈️ How are you traveling?</label>
-                        <select id="transportation">
-                            <option value="">Select transportation...</option>
-                            <option value="plane">✈️ Flight</option>
-                            <option value="car">🚗 Car/Road Trip</option>
-                            <option value="train">🚊 Train</option>
-                            <option value="ferry">⛴️ Ferry/Boat</option>
-                            <option value="bus">🚌 Bus/Coach</option>
-                        </select>
+                <!-- Travel Details Section -->
+                <div class="form-section" id="travelDetailsSection">
+                    <div class="section-header" data-toggle="travelDetails">
+                        <h3>🚗 Travel Details</h3>
+                        <span class="section-toggle">▼</span>
                     </div>
-                    <div class="form-group">
-                        <label for="accommodation">🏨 Where are you staying?</label>
-                        <select id="accommodation">
-                            <option value="">Select accommodation...</option>
-                            <option value="hotel">🏨 Hotel</option>
-                            <option value="airbnb">🏠 Airbnb/Vacation Rental</option>
-                            <option value="camping">⛺ Camping</option>
-                            <option value="hostel">🏨 Hostel</option>
-                            <option value="family">👨‍👩‍👧‍👦 Family/Friends</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="startDate">📅 Start Date</label>
-                        <input type="date" id="startDate">
-                    </div>
-                </div>
+                    <div class="section-content expanded" id="travelDetailsContent">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="transportation">✈️ How are you traveling?</label>
+                                <select id="transportation">
+                                    <option value="">Select transportation...</option>
+                                    <option value="plane">✈️ Flight</option>
+                                    <option value="car">🚗 Car/Road Trip</option>
+                                    <option value="train">🚊 Train</option>
+                                    <option value="ferry">⛴️ Ferry/Boat</option>
+                                    <option value="bus">🚌 Bus/Coach</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="accommodation">🏨 Where are you staying?</label>
+                                <select id="accommodation">
+                                    <option value="">Select accommodation...</option>
+                                    <option value="hotel">🏨 Hotel</option>
+                                    <option value="airbnb">🏠 Airbnb/Vacation Rental</option>
+                                    <option value="camping">⛺ Camping</option>
+                                    <option value="hostel">🏨 Hostel</option>
+                                    <option value="family">👨‍👩‍👧‍👦 Family/Friends</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <!-- NEW: Additional Options (conditional) -->
-                <div class="form-row" id="additionalOptions" style="display: none;">
-                    <div class="form-group" id="flightOptionsGroup" style="display: none;">
-                        <label>✈️ Flight Details</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="internationalFlight" value="international"> International flight</label>
-                            <label><input type="checkbox" id="longHaulFlight" value="longhaul"> Long-haul flight (6+ hours)</label>
-                            <label><input type="checkbox" id="carryOnOnly" value="carryonly"> Carry-on only</label>
-                        </div>
-                    </div>
-                    <div class="form-group" id="hotelOptionsGroup" style="display: none;">
-                        <label>🏨 Hotel Type</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="luxuryHotel" value="luxury"> Luxury/Upscale hotel</label>
-                            <label><input type="checkbox" id="businessHotel" value="business"> Business hotel</label>
-                            <label><input type="checkbox" id="resortHotel" value="resort"> Resort/All-inclusive</label>
-                        </div>
-                    </div>
-                    <div class="form-group" id="carOptionsGroup" style="display: none;">
-                        <label>🚗 Road Trip Details</label>
-                        <div class="checkbox-group">
-                            <label><input type="checkbox" id="longRoadTrip" value="longtrip"> Long road trip (8+ hours)</label>
-                            <label><input type="checkbox" id="rentalCar" value="rental"> Rental car</label>
-                            <label><input type="checkbox" id="crossBorder" value="crossborder"> Crossing borders</label>
+                        <!-- Conditional Options (transport/accommodation specific) -->
+                        <div class="conditional-options" id="conditionalOptions" style="display: none;">
+                            <div class="form-group" id="flightOptionsGroup" style="display: none;">
+                                <label>✈️ Flight Details</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" id="internationalFlight" value="international"> International flight</label>
+                                    <label><input type="checkbox" id="longHaulFlight" value="longhaul"> Long-haul flight (6+ hours)</label>
+                                    <label><input type="checkbox" id="carryOnOnly" value="carryonly"> Carry-on only</label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="hotelOptionsGroup" style="display: none;">
+                                <label>🏨 Hotel Type</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" id="luxuryHotel" value="luxury"> Luxury/Upscale hotel</label>
+                                    <label><input type="checkbox" id="businessHotel" value="business"> Business hotel</label>
+                                    <label><input type="checkbox" id="resortHotel" value="resort"> Resort/All-inclusive</label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="carOptionsGroup" style="display: none;">
+                                <label>🚗 Road Trip Details</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" id="longRoadTrip" value="longtrip"> Long road trip (8+ hours)</label>
+                                    <label><input type="checkbox" id="rentalCar" value="rental"> Rental car</label>
+                                    <label><input type="checkbox" id="crossBorder" value="crossborder"> Crossing borders</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Activities Section -->
-                <div class="form-row">
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>🎯 Activities (check all that apply):</label>
-                        <div class="activities-grid">
-                            <label><input type="checkbox" id="activity-business" value="business"> 💼 Business meetings</label>
-                            <label><input type="checkbox" id="activity-sightseeing" value="sightseeing"> 🏛️ Sightseeing</label>
-                            <label><input type="checkbox" id="activity-hiking" value="hiking"> 🥾 Hiking</label>
-                            <label><input type="checkbox" id="activity-beach" value="beach"> 🏖️ Beach</label>
-                            <label><input type="checkbox" id="activity-workout" value="workout"> 💪 Gym & fitness</label>
-                            <label><input type="checkbox" id="activity-photography" value="photography"> 📸 Photography</label>
+                <div class="form-section" id="activitiesSection">
+                    <div class="section-header" data-toggle="activities">
+                        <h3>🎯 Activities & Plans</h3>
+                        <span class="section-toggle">▼</span>
+                    </div>
+                    <div class="section-content" id="activitiesContent">
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>🎯 Activities (check all that apply):</label>
+                                <div class="activities-grid">
+                                    <label><input type="checkbox" id="activity-business" value="business"> 💼 Business meetings</label>
+                                    <label><input type="checkbox" id="activity-sightseeing" value="sightseeing"> 🏛️ Sightseeing</label>
+                                    <label><input type="checkbox" id="activity-hiking" value="hiking"> 🥾 Hiking</label>
+                                    <label><input type="checkbox" id="activity-beach" value="beach"> 🏖️ Beach</label>
+                                    <label><input type="checkbox" id="activity-workout" value="workout"> 💪 Gym & fitness</label>
+                                    <label><input type="checkbox" id="activity-photography" value="photography"> 📸 Photography</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="notes">📝 Special Notes</label>
+                                <textarea id="notes" rows="3" placeholder="Any special requirements, events, or activities... (e.g., 'attending wedding', 'business conference', 'bringing baby')"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Notes Section -->
-                <div class="form-row">
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="notes">📝 Special Notes</label>
-                        <textarea id="notes" rows="3" placeholder="Any special requirements, events, or activities... (e.g., 'attending wedding', 'business conference', 'bringing baby')"></textarea>
-                    </div>
+
+                <!-- Smart Tips Section -->
+                <div class="smart-tips" id="smartTips" style="display: none;">
+                    <h4>💡 Smart Tips</h4>
+                    <ul id="tipsList"></ul>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="button-group">
-                    <button class="btn btn-primary" id="generateBtn">🚀 Generate Smart List</button>
-                    <button class="btn btn-secondary" id="loadBtn">📂 Load Saved Trip</button>
-                    <button class="btn btn-danger" id="resetBtn">🔄 Reset Everything</button>
-                </div>
-
-                <!-- NEW: Smart Tips Section -->
-                <div class="smart-tips" id="smartTips" style="display: none;">
-                    <h4>💡 Smart Tips</h4>
-                    <ul id="tipsList"></ul>
+                    <button class="btn btn-primary" id="generateBtn">
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">Generate Smart List</span>
+                    </button>
+                    <button class="btn btn-secondary" id="loadBtn">
+                        <span class="btn-icon">📂</span>
+                        <span class="btn-text">Load Saved Trip</span>
+                    </button>
+                    <button class="btn btn-danger" id="resetBtn">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">Reset Everything</span>
+                    </button>
                 </div>
             </div>
         `;
@@ -149,29 +183,53 @@ export class TripSetup {
             }
         });
 
-        // NEW: Transportation change handler
+        // Section toggle handlers
+        document.querySelectorAll('[data-toggle]').forEach(header => {
+            header.addEventListener('click', (e) => {
+                const sectionId = header.getAttribute('data-toggle');
+                this.toggleSection(sectionId);
+            });
+        });
+
+        // Transportation change handler
         document.getElementById('transportation').addEventListener('change', (e) => {
             this.handleTransportationChange(e.target.value);
         });
 
-        // NEW: Accommodation change handler
+        // Accommodation change handler
         document.getElementById('accommodation').addEventListener('change', (e) => {
             this.handleAccommodationChange(e.target.value);
         });
 
-        // NEW: Trip type change handler (enhanced)
+        // Trip type change handler (enhanced)
         document.getElementById('tripType').addEventListener('change', (e) => {
             this.handleTripTypeChange(e.target.value);
         });
 
-        // NEW: Location change handler for smart suggestions
+        // Location change handler for smart suggestions
         document.getElementById('location').addEventListener('input', (e) => {
             this.handleLocationChange(e.target.value);
         });
     }
 
+    // NEW: Toggle accordion sections
+    toggleSection(sectionId) {
+        const content = document.getElementById(`${sectionId}Content`);
+        const toggle = document.querySelector(`[data-toggle="${sectionId}"] .section-toggle`);
+        
+        if (content.classList.contains('expanded')) {
+            content.classList.remove('expanded');
+            toggle.textContent = '▶';
+            toggle.style.transform = 'rotate(0deg)';
+        } else {
+            content.classList.add('expanded');
+            toggle.textContent = '▼';
+            toggle.style.transform = 'rotate(180deg)';
+        }
+    }
+
     handleTransportationChange(transportType) {
-        const additionalOptions = document.getElementById('additionalOptions');
+        const conditionalOptions = document.getElementById('conditionalOptions');
         const flightOptions = document.getElementById('flightOptionsGroup');
         const carOptions = document.getElementById('carOptionsGroup');
         
@@ -181,32 +239,32 @@ export class TripSetup {
         
         // Show relevant options
         if (transportType === 'plane') {
-            additionalOptions.style.display = 'block';
+            conditionalOptions.style.display = 'block';
             flightOptions.style.display = 'block';
         } else if (transportType === 'car') {
-            additionalOptions.style.display = 'block';
+            conditionalOptions.style.display = 'block';
             carOptions.style.display = 'block';
         } else if (transportType === '') {
-            additionalOptions.style.display = 'none';
+            conditionalOptions.style.display = 'none';
         }
         
         this.updateSmartTips();
     }
 
     handleAccommodationChange(accommodationType) {
-        const additionalOptions = document.getElementById('additionalOptions');
+        const conditionalOptions = document.getElementById('conditionalOptions');
         const hotelOptions = document.getElementById('hotelOptionsGroup');
         
         // Show/hide hotel options
         if (accommodationType === 'hotel') {
-            additionalOptions.style.display = 'block';
+            conditionalOptions.style.display = 'block';
             hotelOptions.style.display = 'block';
         } else {
             hotelOptions.style.display = 'none';
-            // Only hide additionalOptions if no transport options are showing
+            // Only hide conditionalOptions if no transport options are showing
             const transportType = document.getElementById('transportation').value;
             if (!transportType || (transportType !== 'plane' && transportType !== 'car')) {
-                additionalOptions.style.display = 'none';
+                conditionalOptions.style.display = 'none';
             }
         }
         
@@ -266,11 +324,12 @@ export class TripSetup {
     }
 
     handleLocationChange(location) {
-        // Simple international detection
+        // Enhanced international detection
         const isInternational = location.includes(',') || 
                                location.toLowerCase().includes('uk') ||
                                location.toLowerCase().includes('europe') ||
-                               location.toLowerCase().includes('asia');
+                               location.toLowerCase().includes('asia') ||
+                               /\b(france|spain|italy|germany|japan|china|canada|mexico)\b/i.test(location);
         
         if (isInternational) {
             const internationalCheckbox = document.getElementById('internationalFlight');
@@ -298,9 +357,21 @@ export class TripSetup {
             if (document.getElementById('longHaulFlight')?.checked) {
                 tips.push('🧦 Consider compression socks for circulation');
             }
+            if (document.getElementById('carryOnOnly')?.checked) {
+                tips.push('🧳 Pack smart - no liquids over 100ml');
+            }
         } else if (transportType === 'car') {
             tips.push('🚗 Check your car insurance coverage for trip area');
             tips.push('🗺️ Download offline maps in case of poor signal');
+            if (document.getElementById('longRoadTrip')?.checked) {
+                tips.push('☕ Plan rest stops every 2 hours for safety');
+            }
+        } else if (transportType === 'train') {
+            tips.push('🚊 Arrive at station 30 minutes early');
+            tips.push('🎧 Bring entertainment for the journey');
+        } else if (transportType === 'ferry') {
+            tips.push('⛴️ Pack motion sickness remedies just in case');
+            tips.push('🧥 Bring warm clothes for deck areas');
         }
         
         // Accommodation tips
@@ -318,6 +389,9 @@ export class TripSetup {
         } else if (accommodationType === 'camping') {
             tips.push('⛺ Check weather forecast for appropriate gear');
             tips.push('🔋 Bring extra batteries for all devices');
+        } else if (accommodationType === 'family') {
+            tips.push('🎁 Consider bringing a host gift');
+            tips.push('🏠 Ask what amenities are available');
         }
         
         // Show/hide tips section
@@ -340,15 +414,15 @@ export class TripSetup {
             return;
         }
 
-        // NEW: Validate transportation and accommodation
+        // Enhanced validation with helpful messages
         if (!tripData.transportation) {
-            if (!confirm('No transportation method selected. Continue anyway?')) {
+            if (!confirm('No transportation method selected. The packing list will be more generic without this info. Continue anyway?')) {
                 return;
             }
         }
 
         if (!tripData.accommodation) {
-            if (!confirm('No accommodation type selected. Continue anyway?')) {
+            if (!confirm('No accommodation type selected. The packing list might miss accommodation-specific items. Continue anyway?')) {
                 return;
             }
         }
@@ -363,7 +437,7 @@ export class TripSetup {
             activities.push(checkbox.value);
         });
 
-        // NEW: Get transportation options
+        // Get transportation options
         const transportationOptions = [];
         if (document.getElementById('internationalFlight')?.checked) {
             transportationOptions.push('international');
@@ -384,7 +458,7 @@ export class TripSetup {
             transportationOptions.push('crossborder');
         }
 
-        // NEW: Get accommodation options
+        // Get accommodation options
         const accommodationOptions = [];
         if (document.getElementById('luxuryHotel')?.checked) {
             accommodationOptions.push('luxury');
@@ -403,7 +477,6 @@ export class TripSetup {
             startDate: document.getElementById('startDate').value,
             notes: document.getElementById('notes').value.trim(),
             activities: activities,
-            // NEW: Transportation and accommodation data
             transportation: document.getElementById('transportation').value,
             accommodation: document.getElementById('accommodation').value,
             transportationOptions: transportationOptions,
@@ -423,7 +496,7 @@ export class TripSetup {
             checkbox.checked = trip.activities && trip.activities.includes(checkbox.value);
         });
 
-        // NEW: Load transportation and accommodation
+        // Load transportation and accommodation
         if (trip.transportation) {
             document.getElementById('transportation').value = trip.transportation;
             this.handleTransportationChange(trip.transportation);
@@ -433,21 +506,31 @@ export class TripSetup {
             this.handleAccommodationChange(trip.accommodation);
         }
 
-        // NEW: Load transportation options
+        // Load transportation options
         if (trip.transportationOptions) {
             trip.transportationOptions.forEach(option => {
-                const checkbox = document.getElementById(option + 'Flight') || 
-                                document.getElementById('longRoadTrip') ||
-                                document.getElementById('rentalCar') ||
-                                document.getElementById('crossBorder');
+                const checkboxIds = {
+                    'international': 'internationalFlight',
+                    'longhaul': 'longHaulFlight',
+                    'carryonly': 'carryOnOnly',
+                    'longtrip': 'longRoadTrip',
+                    'rental': 'rentalCar',
+                    'crossborder': 'crossBorder'
+                };
+                const checkbox = document.getElementById(checkboxIds[option]);
                 if (checkbox) checkbox.checked = true;
             });
         }
 
-        // NEW: Load accommodation options
+        // Load accommodation options
         if (trip.accommodationOptions) {
             trip.accommodationOptions.forEach(option => {
-                const checkbox = document.getElementById(option + 'Hotel');
+                const checkboxIds = {
+                    'luxury': 'luxuryHotel',
+                    'business': 'businessHotel',
+                    'resort': 'resortHotel'
+                };
+                const checkbox = document.getElementById(checkboxIds[option]);
                 if (checkbox) checkbox.checked = true;
             });
         }
@@ -464,18 +547,29 @@ export class TripSetup {
             checkbox.checked = false;
         });
         
-        // NEW: Reset transportation and accommodation
+        // Reset transportation and accommodation
         document.getElementById('transportation').value = '';
         document.getElementById('accommodation').value = '';
         
         // Reset all option checkboxes
-        document.querySelectorAll('#additionalOptions input[type="checkbox"]').forEach(checkbox => {
+        document.querySelectorAll('#conditionalOptions input[type="checkbox"]').forEach(checkbox => {
             checkbox.checked = false;
         });
         
-        // Hide additional options
-        document.getElementById('additionalOptions').style.display = 'none';
+        // Hide conditional options and tips
+        document.getElementById('conditionalOptions').style.display = 'none';
         document.getElementById('smartTips').style.display = 'none';
+        
+        // Reset section states - keep basic info expanded, collapse others
+        document.getElementById('basicInfoContent').classList.add('expanded');
+        document.getElementById('travelDetailsContent').classList.add('expanded');
+        document.getElementById('activitiesContent').classList.remove('expanded');
+        
+        // Reset toggle icons
+        document.querySelectorAll('.section-toggle').forEach(toggle => {
+            toggle.textContent = '▼';
+            toggle.style.transform = 'rotate(180deg)';
+        });
         
         this.setDefaultDate();
     }
